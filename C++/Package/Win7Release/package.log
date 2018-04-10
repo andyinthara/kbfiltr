@@ -1,0 +1,20 @@
+﻿Build started 6/7/17 11:18.
+     1>Project "D:\SHARED\WIN32\KeyboardFilter\C++\Package\package.VcxProj" on node 2 (Build target(s)).
+     1>Inf2Cat:
+         C:\Program Files\Windows Kits\8.1\bin\x86\inf2cat.exe /os:7_x86 /driver:D:\SHARED\WIN32\KeyboardFilter\C++\Win7Release\package\ 
+         ........................................
+         Signability test complete.
+         
+         Errors:
+         None
+         
+         Warnings:
+         None
+         
+         Catalog generation complete.
+         D:\SHARED\WIN32\KeyboardFilter\C++\Win7Release\package\kmdfsamples.cat
+     1>Done Building Project "D:\SHARED\WIN32\KeyboardFilter\C++\Package\package.VcxProj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:03.61

@@ -1,0 +1,13 @@
+﻿Build started 25/11/2014 11:59:01 AM.
+     1>Project "C:\SHARED\DEV\WIN32\KeyboardFilter\C++\exe\kbftest.vcxproj" on node 3 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IWin7Debug\ /Zi /nologo /W4 /WX /Od /Oy- /D _X86_=1 /D i386=1 /D STD_CALL /D WIN32_LEAN_AND_MEAN=1 /D _WIN32_WINNT=0x0601 /D WINVER=0x0601 /D WINNT=1 /D NTDDI_VERSION=0x06010000 /D DBG=1 /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t- /Zc:forScope /Fo"Win7Debug\\" /Fd"Win7Debug\vc120.pdb" /Gz /TC /FI"C:\Program Files\Windows Kits\8.1\Include\Shared\warning.h" /analyze- /errorReport:prompt kbftest.c
+         kbftest.c
+       Link:
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"Win7Debug\kbftest.exe" /INCREMENTAL:NO /NOLOGO /WX kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib setupapi.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"Win7Debug\kbftest.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"Win7Debug\kbftest.lib" /MACHINE:X86 /IGNORE:4198,4010,4037,4039,4065,4070,4078,4087,4089,4221 Win7Debug\kbftest.obj
+         kbftest.vcxproj -> C:\SHARED\DEV\WIN32\KeyboardFilter\C++\exe\Win7Debug\kbftest.exe
+     1>Done Building Project "C:\SHARED\DEV\WIN32\KeyboardFilter\C++\exe\kbftest.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:08.41

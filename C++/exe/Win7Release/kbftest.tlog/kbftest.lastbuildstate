@@ -1,0 +1,2 @@
+#TargetFrameworkVersion=v4.0:PlatformToolSet=WindowsApplicationForDrivers8.1:EnableManagedIncrementalBuild=false:VCToolArchitecture=Native32Bit
+Win7 Release|Win32|D:\SHARED\WIN32\KeyboardFilter\C++\|

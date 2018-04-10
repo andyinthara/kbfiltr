@@ -1,0 +1,25 @@
+﻿Build started 9/5/17 8:53.
+     1>Project "D:\SHARED\WIN32\KeyboardFilter\C++\Package\package.VcxProj" on node 2 (Build target(s)).
+     1>Inf2Cat:
+         C:\Program Files\Windows Kits\8.1\bin\x86\inf2cat.exe /os:7_x86 /driver:D:\SHARED\WIN32\KeyboardFilter\C++\Win7Debug\package\ 
+         ........................................
+         Signability test complete.
+         
+         Errors:
+         None
+         
+         Warnings:
+         None
+         
+         Catalog generation complete.
+         D:\SHARED\WIN32\KeyboardFilter\C++\Win7Debug\package\kmdfsamples.cat
+       DriverTestSign:
+         C:\Program Files\Windows Kits\8.1\bin\x86\signtool.exe sign /ph /sha1 "891BA9E8A9EEF92E768A4DBCFB731A23CC7CF637" 
+         Done Adding Additional Store
+         Successfully signed: D:\SHARED\WIN32\KeyboardFilter\C++\Win7Debug\package\kmdfsamples.cat
+         
+     1>Done Building Project "D:\SHARED\WIN32\KeyboardFilter\C++\Package\package.VcxProj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:03.64

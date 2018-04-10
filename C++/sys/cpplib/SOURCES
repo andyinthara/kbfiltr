@@ -1,0 +1,16 @@
+TARGETNAME=htscpp
+TARGETTYPE=DRIVER_LIBRARY
+LIBPATH=..\..\lib\$(BUILD_ALT_DIR)
+TARGETPATH=$(LIBPATH)
+
+MSC_WARNING_LEVEL=/W4 /WX
+INCLUDES=..\inc
+
+
+SOURCES=\
+   cppdata.cpp \
+   cpprun.cpp
+
+
+ 
+

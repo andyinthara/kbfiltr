@@ -1,0 +1,19 @@
+TARGETNAME=testDrv
+TARGETTYPE=DRIVER
+TARGETPATH=obj
+
+LIBPATH=..\..\lib\$(BUILD_ALT_DIR)
+MSC_WARNING_LEVEL=/W4 /WX
+INCLUDES=..\inc
+
+TARGETLIBS=\
+    $(LIBPATH)\*\htscpp.lib
+
+SOURCES=\
+   testDrv.cpp
+   
+   
+
+
+ 
+

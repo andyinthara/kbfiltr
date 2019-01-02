@@ -1,0 +1,17 @@
+﻿  Building 'kbfiltr' with toolset 'WindowsKernelModeDriver10.0' and the 'Desktop' target platform.
+  Stamping x64\Debug\kbfiltr.inf [Version] section with DriverVer=09/13/2018,15.47.20.972
+  kbfiltr.vcxproj -> D:\SHARED\WIN32\KeyboardFilter64\C++\sys\x64\Debug\kbfiltr.sys
+  .........................
+  Signability test complete.
+  
+  Errors:
+  None
+  
+  Warnings:
+  None
+  
+  Catalog generation complete.
+  D:\SHARED\WIN32\KeyboardFilter64\C++\sys\x64\Debug\kbfiltr\kmdfsamples.cat
+  Done Adding Additional Store
+  Successfully signed: x64\Debug\kbfiltr\kmdfsamples.cat
+  

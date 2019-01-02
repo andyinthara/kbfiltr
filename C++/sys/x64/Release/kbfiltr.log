@@ -1,0 +1,54 @@
+﻿  Building 'kbfiltr' with toolset 'WindowsKernelModeDriver10.0' and the 'Universal' target platform.
+  Stamping x64\Release\kbfiltr.inf [Version] section with DriverVer=01/02/2019,15.36.14.619
+  kbfiltr.c
+d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.c(626): warning C4459: declaration of 'buffer' hides global declaration
+  d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.h(255): note: see declaration of 'buffer'
+d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.c(836): warning C4242: '=': conversion from '__int64' to 'ULONG', possible loss of data
+d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.c(838): warning C4267: '=': conversion from 'size_t' to 'ULONG', possible loss of data
+d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.c(873): warning C4127: conditional expression is constant
+d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.c(1044): warning C4477: 'sprintf' : format string '%lu' requires an argument of type 'unsigned long', but variadic argument 7 has type 'LONGLONG'
+  d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.c(1044): note: consider using '%llu' in the format string
+  d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.c(1044): note: consider using '%Iu' in the format string
+  d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.c(1044): note: consider using '%I64u' in the format string
+d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.c(1072): warning C4459: declaration of 'layer' hides global declaration
+  d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.h(237): note: see declaration of 'layer'
+d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.c(1072): warning C4459: declaration of 'key1' hides global declaration
+  d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.h(235): note: see declaration of 'key1'
+d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.c(1072): warning C4459: declaration of 'key2' hides global declaration
+  d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.h(235): note: see declaration of 'key2'
+d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.c(1098): warning C4459: declaration of 'key1' hides global declaration
+  d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.h(235): note: see declaration of 'key1'
+d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.c(1098): warning C4459: declaration of 'key2' hides global declaration
+  d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.h(235): note: see declaration of 'key2'
+d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.c(1204): warning C4459: declaration of 'key1' hides global declaration
+  d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.h(235): note: see declaration of 'key1'
+d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.c(1204): warning C4459: declaration of 'key2' hides global declaration
+  d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.h(235): note: see declaration of 'key2'
+d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.c(1261): warning C4456: declaration of 'i' hides previous local declaration
+  d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.c(1200): note: see declaration of 'i'
+d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.c(1272): warning C4456: declaration of 'i' hides previous local declaration
+  d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.c(1200): note: see declaration of 'i'
+d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.c(1198): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.c(1327): warning C4477: 'swprintf' : format string '%s' requires an argument of type 'unsigned short *', but variadic argument 1 has type 'char *'
+  d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.c(1327): note: consider using '%hs' in the format string
+  d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.c(1327): note: consider using '%Ts' in the format string
+  d:\shared\win32\keyboardfilter64\c++\sys\kbfiltr.c(1327): note: this warning is based on non-standard semantics used by Visual C++
+  kbfiltr.vcxproj -> D:\SHARED\WIN32\KeyboardFilter64\C++\sys\x64\Release\kbfiltr.sys
+  Done Adding Additional Store
+  Successfully signed: D:\SHARED\WIN32\KeyboardFilter64\C++\sys\x64\Release\kbfiltr.sys
+  
+  Driver is a Universal Driver.
+  ........................................
+  Signability test complete.
+  
+  Errors:
+  None
+  
+  Warnings:
+  None
+  
+  Catalog generation complete.
+  D:\SHARED\WIN32\KeyboardFilter64\C++\sys\x64\Release\kbfiltr\kmdfsamples.cat
+  Done Adding Additional Store
+  Successfully signed: x64\Release\kbfiltr\kmdfsamples.cat
+  

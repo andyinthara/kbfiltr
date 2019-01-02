@@ -14,4 +14,9 @@
       <UniqueIdentifier>{E5FC03F8-DF62-4D02-84B7-B83785E6BCB5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="kbftest.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
 </Project>

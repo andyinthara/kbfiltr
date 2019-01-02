@@ -1,0 +1,5 @@
+﻿  Building 'kbfiltr' with toolset 'WindowsKernelModeDriver10.0' and the 'Desktop' target platform.
+  Stamping .\x64\Win10\\kbfiltr.inf [Version] section with DriverVer=07/19/2018,13.53.6.442
+D:\SHARED\WIN32\KeyboardFilter\C++\sys\kbfiltr.inx(20-20): error 1209: Section [destinationdirs] is defined multiple times.
+D:\SHARED\WIN32\KeyboardFilter\C++\sys\kbfiltr.inx(31-31): warning 2010: Section [DDK_Ex.Mfg] should have '.NTx86' decoration.
+D:\SHARED\WIN32\KeyboardFilter\C++\sys\kbfiltr.inx(97-97): error 1209: Section [sourcedisksfiles] is defined multiple times.

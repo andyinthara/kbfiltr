@@ -1,0 +1,10 @@
+Inf2Cat Tool Output:
+.....................................................
+Signability test failed.
+
+Errors:
+22.9.1: wdfcoinstaller01011.dll in [kbfiltr_coinstaller_copyfiles] of kbfiltr\kbfiltr_hid_kb_only.inf is missing or cannot be decompressed from source media.  Please verify all path values specified in SourceDisksNames, SouceDisksFiles, and CopyFiles sections resolve to the actual location of the file, and are expressed in terms relative to the location of the inf.
+kbfiltr\kbfiltr_hid_kb_only.inf does not have NTAMD64 decorated model sections.
+
+Warnings:
+None

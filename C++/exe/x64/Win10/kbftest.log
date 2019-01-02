@@ -1,0 +1,5 @@
+﻿kbftest.obj : error LNK2019: unresolved external symbol __imp_SetupDiDestroyDeviceInfoList referenced in function main
+kbftest.obj : error LNK2019: unresolved external symbol __imp_SetupDiEnumDeviceInterfaces referenced in function main
+kbftest.obj : error LNK2019: unresolved external symbol __imp_SetupDiGetDeviceInterfaceDetailA referenced in function main
+kbftest.obj : error LNK2019: unresolved external symbol __imp_SetupDiGetClassDevsA referenced in function main
+x64\Win10\kbftest.exe : fatal error LNK1120: 4 unresolved externals

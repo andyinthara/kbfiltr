@@ -1,18 +1,22 @@
-﻿Build started 6/7/17 11:18.
-     1>Project "D:\SHARED\WIN32\KeyboardFilter\C++\sys\kbfiltr.vcxproj" on node 2 (Build target(s)).
+﻿Build started 22/5/18 10:23.
+     1>Project "D:\SHARED\WIN32\KeyboardFilter\C++\sys\kbfiltr.vcxproj" on node 2 (Rebuild target(s)).
      1>StampInf:
          C:\Program Files\Windows Kits\8.1\bin\x86\stampinf.exe -d "05/26/2017" -a "x86" -v "*" -k "1.11" -u "1.11.0" -f .\Win7Release\\kbfiltr.inf 
-         Stamping .\Win7Release\\kbfiltr.inf [Version] section with DriverVer=05/26/2017,11.18.47.739
+         Stamping .\Win7Release\\kbfiltr.inf [Version] section with DriverVer=05/26/2017,10.23.59.524
        ClCompile:
-         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IWin7Release\ /Zi /nologo /W4 /WX /Ox /Os /Oy- /D _X86_=1 /D i386=1 /D STD_CALL /D _WIN32_WINNT=0x0601 /D WINVER=0x0601 /D WINNT=1 /D NTDDI_VERSION=0x06010000 /D KMDF_VERSION_MAJOR=1 /D KMDF_VERSION_MINOR=11 /GF /Gm- /Zp8 /GS /Gy /fp:precise /Zc:wchar_t- /Zc:forScope- /GR- /Fo"Win7Release\\" /Fd"Win7Release\vc120.pdb" /Gz /wd4603 /wd4627 /wd4986 /wd4987 /wd4996 /FI"C:\Program Files\Windows Kits\8.1\Include\Shared\warning.h" /analyze- /errorReport:prompt /kernel -cbstring  /d1nodatetime /d1import_no_registry /d2AllowCompatibleILVersions /d2Zi+ kbfiltr.c
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IWin7Release\ /Zi /nologo /W4 /WX /Ox /Os /Oy- /D _X86_=1 /D i386=1 /D STD_CALL /D _WIN32_WINNT=0x0601 /D WINVER=0x0601 /D WINNT=1 /D NTDDI_VERSION=0x06010000 /D KMDF_VERSION_MAJOR=1 /D KMDF_VERSION_MINOR=11 /GF /Gm- /Zp8 /GS /Gy /fp:precise /Zc:wchar_t- /Zc:forScope- /GR- /Fo"Win7Release\\" /Fd"Win7Release\vc120.pdb" /Gz /wd4603 /wd4627 /wd4986 /wd4987 /wd4996 /FI"C:\Program Files\Windows Kits\8.1\Include\Shared\warning.h" /analyze- /errorReport:prompt /kernel -cbstring  /d1nodatetime /d1import_no_registry /d2AllowCompatibleILVersions /d2Zi+ kbfiltr.c rawpdo.c
          kbfiltr.c
+         rawpdo.c
+         Generating Code...
+       ResourceCompile:
+         C:\Program Files\Windows Kits\8.1\bin\x86\rc.exe /D _X86_=1 /D i386=1 /D STD_CALL /D _WIN32_WINNT=0x0601 /D WINVER=0x0601 /D WINNT=1 /D NTDDI_VERSION=0x06010000 /D "SMP_ID=\\\"{E2D8CF21-3542-488F-9736-355EEB121956}\\\"" /l"0x0409" /I"C:\Program Files\Windows Kits\8.1\Include\UM" /IWin7Release\ /nologo /fo"Win7Release\kbfiltr.res" kbfiltr.rc 
        Link:
          C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"Win7Release\kbfiltr.sys" /VERSION:"6.3" /INCREMENTAL:NO /NOLOGO /WX /SECTION:"INIT,d" "C:\Program Files\Windows Kits\8.1\lib\win7\KM\x86\memcmp.lib" "C:\Program Files\Windows Kits\8.1\lib\win7\KM\x86\wdmsec.lib" "C:\Program Files\Windows Kits\8.1\lib\win7\KM\x86\ntstrsafe.lib" "C:\Program Files\Windows Kits\8.1\lib\win7\KM\x86\rtlver.lib" "C:\Program Files\Windows Kits\8.1\lib\win7\KM\x86\BufferOverflowK.lib" "C:\Program Files\Windows Kits\8.1\lib\win7\KM\x86\ntoskrnl.lib" "C:\Program Files\Windows Kits\8.1\lib\win7\KM\x86\hal.lib" "C:\Program Files\Windows Kits\8.1\lib\win7\KM\x86\wmilib.lib" "C:\Program Files\Windows Kits\8.1\lib\wdf\kmdf\x86\1.11\WdfLdr.lib" "C:\Program Files\Windows Kits\8.1\lib\wdf\kmdf\x86\1.11\WdfDriverEntry.lib" /NODEFAULTLIB /MANIFEST:NO /DEBUG /PDB:"Win7Release\kbfiltr.pdb" /SUBSYSTEM:NATIVE,"6.01" /Driver /OPT:REF /OPT:ICF /ENTRY:"FxDriverEntry@8" /RELEASE /IMPLIB:"Win7Release\kbfiltr.lib" /MERGE:"_TEXT=.text;_PAGE=PAGE" /MACHINE:X86 /PROFILE /SAFESEH /kernel /IGNORE:4198,4010,4037,4039,4065,4070,4078,4087,4089,4221 /osversion:6.3 /pdbcompress /debugtype:pdata Win7Release\kbfiltr.res
          Win7Release\kbfiltr.obj
          Win7Release\rawpdo.obj
          kbfiltr.vcxproj -> D:\SHARED\WIN32\KeyboardFilter\C++\sys\Win7Release\kbfiltr.sys
-     1>Done Building Project "D:\SHARED\WIN32\KeyboardFilter\C++\sys\kbfiltr.vcxproj" (Build target(s)).
+     1>Done Building Project "D:\SHARED\WIN32\KeyboardFilter\C++\sys\kbfiltr.vcxproj" (Rebuild target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:02.01
+Time Elapsed 00:00:08.25

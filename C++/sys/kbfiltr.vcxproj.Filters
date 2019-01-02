@@ -3,61 +3,28 @@
   <ItemGroup>
     <Filter Include="Source Files">
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx;*</Extensions>
-      <UniqueIdentifier>{020487D2-A15D-4F92-B262-3F06FAF60E06}</UniqueIdentifier>
+      <UniqueIdentifier>{69D0BA5C-EFD2-4A08-8829-DABFDD34CCDE}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-      <UniqueIdentifier>{591199D7-2F0E-4681-A22F-7AC73C36DB1E}</UniqueIdentifier>
+      <UniqueIdentifier>{9DBC6F0A-A32B-4824-BE0B-1DF2B8F92760}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms;man;xml</Extensions>
-      <UniqueIdentifier>{5B353484-BFE1-426D-BFFD-4E0D8654C75F}</UniqueIdentifier>
+      <UniqueIdentifier>{2EBD3B86-D170-4C37-8437-0A64E6864AA6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Driver Files">
+      <Extensions>inf;inv;inx;mof;mc;</Extensions>
+      <UniqueIdentifier>{A6674166-7336-4066-9782-8BC6F701B19A}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="rawpdo.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="kbfiltr.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="kbfiltr.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="public.h" />
-    <ClInclude Include="kbfiltr.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="public.h" />
-    <ClInclude Include="kbfiltr.h" />
-    <ClInclude Include="public.h" />
-    <ClInclude Include="config.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="kbfiltr.h" />
-    <ClInclude Include="public.h" />
-    <ClInclude Include="config.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="kbfiltr.h" />
-    <ClInclude Include="public.h" />
-    <ClInclude Include="config.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="kbfiltr.h" />
-    <ClInclude Include="public.h" />
-    <ClInclude Include="config.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="kbfiltr.h" />
-    <ClInclude Include="public.h" />
-    <ClInclude Include="config.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="kbfiltr.h" />
-    <ClInclude Include="public.h" />
+    <ClCompile Include="rawpdo.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="kbfiltr.rc">
@@ -65,6 +32,25 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Inf Include=".\kbfiltr.inx" />
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="*.h;*.hpp;*.hxx;*.hm;*.inl;*.xsd">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Inf Include="kbfiltr.inx">
+      <Filter>Driver Files</Filter>
+    </Inf>
   </ItemGroup>
 </Project>

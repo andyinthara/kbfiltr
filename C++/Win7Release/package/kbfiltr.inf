@@ -15,7 +15,7 @@ Class=Keyboard
 ; Ignore the error from chkinf.
 CatalogFile=KmdfSamples.cat
 
-DriverVer=05/26/2017,11.18.47.739
+DriverVer=05/26/2017,10.23.59.524
 
 [DestinationDirs]
 DefaultDestDir   = 12

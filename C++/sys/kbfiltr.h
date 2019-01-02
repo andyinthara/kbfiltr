@@ -23,12 +23,12 @@ Environment:
 
 #include "ntddk.h"
 #include "kbdmou.h"
-#include <ntddkbd.h>
-#include <ntdd8042.h>
+#include "ntddkbd.h"
+#include "ntdd8042.h"
 
 #pragma warning(default:4201)
 
-#include <wdf.h>
+#include "wdf.h"
 
 #define NTSTRSAFE_LIB
 #include <ntstrsafe.h>
@@ -199,7 +199,7 @@ KbFiltr_CreateRawPdo(
 );
 
 #define MAX_KB_INPUT_DATA	64	
-#define MAX_KEYOUT			64	
+#define MAX_KEYOUT			128	
 #define MAX_LAYERS			5
 #define MAX_KEYS			256	
 #define CMD_LEN				16	
@@ -232,11 +232,12 @@ struct_binding bindings[MAX_LAYERS][MAX_KEYS][MAX_KEYS];
 USHORT keymap[MAX_KEYS];
 char phrases[PHRASE_MAX][PHRASE_LEN];
 char commands[MAX_KEYS][COMMAND_LEN];
-USHORT key1, key2;
+USHORT key1, key2, outputed;
 #define ALL_LAYERS				255	
 USHORT layer;
 USHORT pause;
 USHORT loading_config;
+USHORT config_loaded;
 
 // settings, parameters
 #define SETTING_ON				1
@@ -320,7 +321,7 @@ KEY_E1		Extended scan code used to indicate special keyboard functions.
 #define K_BOUND			0x01
 #define K_ENABLED		0x00
 #define K_UNDEFINED		0x00
-#define K_SINGLE		0x02
+#define K_SINGLE		0xF2
 
 #define K_ERROR			0x00
 #define K_ESC			0x01

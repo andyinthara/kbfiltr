@@ -101,6 +101,10 @@ STATUS_UNSUCCESSFUL otherwise.
 	}
 
 	Initialize();
+	outputed = 0;
+	key1 = 0;
+	key2 = 0;
+	khold = 0;
 	ThreadLoadConfig();
 
 	return status;
@@ -711,7 +715,7 @@ Status is returned.
 
 	*TurnTranslationOn = TRUE;
 
-	if (KeyEnabled == 0 || reload_config == SETTING_ON) ThreadLoadConfig();
+	//if (KeyEnabled == 0 || reload_config == SETTING_ON) ThreadLoadConfig();
 	return status;
 }
 
@@ -766,9 +770,6 @@ Status is returned.
 {
 	PDEVICE_EXTENSION devExt;
 	BOOLEAN           retVal = TRUE;
-
-
-	if (KeyEnabled == 0 || reload_config == SETTING_ON) ThreadLoadConfig();
 
 	devExt = (PDEVICE_EXTENSION)IsrContext;
 
@@ -832,143 +833,140 @@ Status is returned.
 	LARGE_INTEGER tickcount;
 
 	kcount = 0;
+	*InputDataConsumed = InputDataEnd - InputDataStart;
 
-	for (size_t i = 0; i < length; i++)
-	{
+	last_packet_length = length;
+
+	for (size_t i = 0; i < length; i++) {
 		processbinding = FALSE;
 
-
 		// SCROLLOCK to cycle through modes
-		if (InputDataStart[i].MakeCode == K_SCROLLLOCK)
-		{
-			if (InputDataStart[i].Flags == KEY_BREAK)
-			{
+		if (InputDataStart[i].MakeCode == K_SCROLLLOCK) {
+			if ((InputDataStart[i].Flags & KEY_BREAK) == KEY_BREAK) {
 				if (++KeyEnabled > 3) KeyEnabled = KEY_MODE_KEYBOARD_OFF;
 			}
 			continue;
 		}
 
-
-
-		if (KeyEnabled == KEY_MODE_BINDING_ON)
-		{
-			last_packet_length = length;
-			USHORT keyp = InputDataStart[i].MakeCode;
-			if (keyp == 0) continue;
+		if (KeyEnabled == KEY_MODE_BINDING_ON) {
+			USHORT keyp = InputDataStart[i].MakeCode;	
+			if (keyp == 0) {
+				//key1 = 0;
+				//key2 = 0;
+				continue;
+			}
 
 			USHORT keystate = InputDataStart[i].Flags;
 			kcount = 0;
 
-			if (layer == 0)
-			{
-				if (bindings[layer][keyp][K_SINGLE].out1) // single key pre-filters 
-				{
+			if (layer == 0) {
+				if (bindings[layer][keyp][K_SINGLE].out1) { 
+					// single key pre-filters 
 					InputDataStart[i].MakeCode = keyp = bindings[layer][keyp][K_SINGLE].out1;
 					InputDataStart[i].Flags = InputDataStart[i].Flags | ((keyp >= K_HOME) ? KEY_E0 : 0);
 				}
 			}
 
-
-			if ((keystate & KEY_BREAK) == KEY_BREAK)
-			{
-				if (keyp == key1) // at this point keyp is non-zero, key1 pressed and being released
-				{
-					if (key2 == 0) // at this point key1 is non-zero, no binding started
-					{
-						if (bindings[layer][key1][key1].out1) // long key binding
-						{
+			if ((keystate & KEY_BREAK) == KEY_BREAK) {
+				if (keyp == key1) { // at this point keyp is non-zero, key1 pressed and being released
+					if (key2 == 0) { // at this point key1 is non-zero, no binding started
+						if (0 && bindings[layer][key1][key1].out1) { // long hold key binding
 							KeQueryTickCount(&tickcount);
-							if ((tickcount.QuadPart - khold) >= longkey_time)
-							{
+							if ((tickcount.QuadPart - khold) >= longkey_time) {
 								key1 = key2 = keyp;
 								processbinding = TRUE;
 								longkeybinding = TRUE;
 							}
 						}
 
-						if (!processbinding)
-						{
-							keyout[kcount++] = Keydata(key1, KEY_MAKE); keyout[kcount++] = Keydata(key1, KEY_BREAK);
+						if (outputed == 0) {
+							keyout[kcount++] = Keydata(key1, KEY_MAKE); 
+							keyout[kcount++] = Keydata(key1, KEY_BREAK);
 						}
 					}
 
-					if (!processbinding) key1 = 0;
+					//if (!processbinding) key1 = 0;
+					key1 = 0; 
 					khold = 0;
+					outputed = 0;
 				}
-				keyrepeat = 0;
-			}
-			else if (((keystate & KEY_MAKE) == KEY_MAKE) && keyrepeat == 0)
-			{
-				if (key1 == 0)
-				{
-					// no key binding when starting with shift key
-					if ((keyp != K_LSHIFT) && (keyp != K_RSHIFT))
-					{
-						key2 = 0;
 
-						if (bindings[layer][keyp][K_ENABLED].out1) // binding found, start the wait
-						{
+				//if (outputed == 0) {
+				//key1 = 0;
+				keyrepeat = 0;
+
+			 } else if (((keystate & KEY_MAKE) == KEY_MAKE) && (keyrepeat == 0)) {
+				if (key1 == 0) {
+
+					// no key binding when starting with shift key
+					if ((keyp != K_LSHIFT) && (keyp != K_RSHIFT)) {
+						if (bindings[layer][keyp][K_ENABLED].out1) { // binding found, start the wait
 							key1 = keyp;
-							if (bindings[layer][key1][K_SINGLE].out1) // check if it's a key combo or a single-single key binding
-							{
+							if (bindings[layer][key1][K_SINGLE].out1) { // check if it's a key combo or a single-single key binding
 								key2 = K_SINGLE;
 								processbinding = TRUE;
-							}
-							else // hold key1 and wait for key2 press
-							{
+								outputed = 1;
+							} else { // hold key1 and wait for key2 press
 								KeQueryTickCount(&tickcount);
 								khold = tickcount.QuadPart;
 								continue;
 							}
+						} else {
+							key2 = 0;
+							khold = 0;
 						}
 					}
-				}
-				else // key1 != 0
-				{
-					KeQueryTickCount(&tickcount);
-					if (key1 == keyp) // key holding
-					{
-						if (!bindings[layer][key1][key1].out1) // long key binding
-						{
-							if ((tickcount.QuadPart - khold) >= key_repeat_time)
-							{
-								keyrepeat = 1; // if key has been held for longer than repeat time then do nothing and let the key through for native repeating
+
+
+				} else { // key1 != 0
+					if (keyp == key1) { // key holding
+						if (!bindings[layer][key1][key1].out1) { // long key binding not found
+							KeQueryTickCount(&tickcount);
+							if ((tickcount.QuadPart - khold) >= key_repeat_time) {
+								// if key has been held for longer than repeat time then do nothing and let the key through for native repeating
+								//keyrepeat = 1; 
+								outputed = 1;
+								keyout[kcount++] = Keydata(key1, KEY_MAKE); keyout[kcount++] = Keydata(key1, KEY_BREAK);
 							}
-							else continue;
+							else {
+								continue;
+							}
 						}
-						continue;
-					}
-					else
-					{
-						// key_bind_time has ellapsed, binding matched for key1 + key2
-						if (bindings[layer][key1][keyp].out1) // have out1
-						{
-							if ((tickcount.QuadPart - khold) >= key_bind_time)
-							{
+
+						if (kcount == 0) {
+							KeQueryTickCount(&tickcount);
+							if ((tickcount.QuadPart - khold) >= key_bind_time) {
+								outputed = 1;
+								continue; // key1 is still holding waiting for long hold key binding
+							}
+							else {
+								continue; // key1 is still holding waiting for long hold key binding
+							}
+						}
+						
+					} else { // key_bind_time has been read, binding matched for key1 + key2
+						if (bindings[layer][key1][keyp].out1) { // have out1 for 2 key binding
+							KeQueryTickCount(&tickcount);
+							if ((tickcount.QuadPart - khold) >= key_bind_time) {
 								key2 = keyp;
 								processbinding = TRUE;
-							}
-							else // key_bind_time has not ellapsed, no binding registered, output the held keys as normal keypresses
-							{
+								outputed = 1;
+							} else { // key_bind_time has not ellapsed, no binding registered, output the held keys as normal keypresses
 								keyout[kcount++] = Keydata(key1, KEY_MAKE); keyout[kcount++] = Keydata(key1, KEY_BREAK);
 								keyout[kcount++] = Keydata(keyp, KEY_MAKE); keyout[kcount++] = Keydata(keyp, KEY_BREAK);
 								key1 = 0;
 								key2 = 0;
+								outputed = 1;
 							}
-						}
-						else // no binding found, output keyp
-						{
-							if (key2) // binding has already started
-							{
+						} else { // no binding found, output keyp
+							if (key2) { // binding has already been triggered once  
 								keyout[kcount++] = Keydata(keyp, KEY_MAKE); keyout[kcount++] = Keydata(keyp, KEY_BREAK);
-								key2 = keyp;
-							}
-							else // if no binding has started just treat it as quick sequential keystrokes
-							{
+								outputed = 1;
+							} else { // if no binding has started just treat it as quick sequential keystrokes
 								keyout[kcount++] = Keydata(key1, KEY_MAKE); keyout[kcount++] = Keydata(key1, KEY_BREAK);
 								keyout[kcount++] = Keydata(keyp, KEY_MAKE); keyout[kcount++] = Keydata(keyp, KEY_BREAK);
+								outputed = 1;
 								key1 = 0;
-								key2 = 0;
 							}
 						}
 					}
@@ -977,45 +975,32 @@ Status is returned.
 
 
 
-
-
-
-			if (processbinding)
-			{
-				if (bindings[layer][key1][key2].out1 == K_VARIABLE) // binding starting with ~ is an internal command
-				{
+			if (processbinding) {
+				if (bindings[layer][key1][key2].out1 == K_VARIABLE) { // binding starting with ~ is an internal command
 					Command(bindings[layer][key1][key2].out2, key1, key2, bindings[layer][key1][key2]);
-					key1 = 0; key2 = 0;
 					continue; // no output
-				}
-				else if (bindings[layer][key1][key2].out1 == K_COMMAND) // stored command(s) 
-				{
+
+				} else if (bindings[layer][key1][key2].out1 == K_COMMAND) { // stored command(s) 
 					char *command = commands[bindings[layer][key1][key2].out2]; // out2 => command sequence name 
-					for (int ci = 0; ci < COMMAND_LEN; ci++)
-					{
+					for (int ci = 0; ci < COMMAND_LEN; ci++) {
 						char command_name = command[ci];
 						if (command_name == 0) continue;
 						Keyoutput(layer, K_COMMAND, keymap[command_name]);
 					}
-				}
-				else
-				{
+				} else {
 					Keyoutput(layer, key1, key2);
 				}
 				processbinding = FALSE;
 				
 				if (key2 == K_SINGLE) keyrepeat = 0;
 				if (longkeybinding) longkeybinding = key1 = key2 = 0;
+				key2 = 0;
 			}
 
-			
 			if (pause == TRUE) continue; // pause command
 
-
-			if (kcount)
-			{
-				for (USHORT j = 0; j < kcount; j++)
-				{
+			if (kcount) {
+				for (USHORT j = 0; j < kcount; j++) {
 					USHORT key = keyout[j].key;
 					data[j].MakeCode = key;
 					data[j].Flags = keyout[j].flag | ((key >= K_HOME) ? KEY_E0 : 0);
@@ -1025,20 +1010,22 @@ Status is returned.
 
 				(*(PSERVICE_CALLBACK_ROUTINE)(ULONG_PTR)devExt->UpperConnectData.ClassService)(
 					devExt->UpperConnectData.ClassDeviceObject, &data[0], &data[kcount], consumed);
-			}
-			else
-			{
+
+			} else {
+				ULONG _consumed = 1;
+				PULONG consumed = &_consumed;
 				(*(PSERVICE_CALLBACK_ROUTINE)(ULONG_PTR)devExt->UpperConnectData.ClassService)(
-					devExt->UpperConnectData.ClassDeviceObject, &InputDataStart[i], &InputDataStart[i+1], InputDataConsumed);
+					devExt->UpperConnectData.ClassDeviceObject, &InputDataStart[i], &InputDataStart[i+1], consumed);
 			}
-		}
-		else if (KeyEnabled == KEY_MODE_BINDING_OFF)
-		{
+
+
+
+		} else if (KeyEnabled == KEY_MODE_BINDING_OFF) {
+			ULONG _consumed = 1;
+			PULONG consumed = &_consumed;
 			(*(PSERVICE_CALLBACK_ROUTINE)(ULONG_PTR)devExt->UpperConnectData.ClassService)(
-				devExt->UpperConnectData.ClassDeviceObject, &InputDataStart[i], &InputDataStart[i + 1], InputDataConsumed);
-		}
-		else
-		{
+				devExt->UpperConnectData.ClassDeviceObject, &InputDataStart[i], &InputDataStart[i+1], consumed);
+		} else {
 			// diagnostic mode
 			// no keys will register
 			// but certain command keys will output setting values
@@ -1050,83 +1037,68 @@ Status is returned.
 			char message[MSG_LEN];
 			memset(message, 0, MSG_LEN);
 
-			if (keystate == KEY_MAKE && keyp == K_H)
-			{
+			if (keystate == KEY_MAKE && keyp == K_H) {
 				sprintf(message, "t=%luSdt=%luSr=%luSo=%luSs=%luSc=%luS",
 					key_bind_time, longkey_time, key_repeat_time, key_bind_timeout, safe_mode, capslock_to_lshift);
-			}
-			else if (keystate == KEY_MAKE && keyp == K_J)
-			{
-				sprintf(message, "l=%luSr=%luSlc=%luSpl=%luS1=%luk=%lu",
-					layer, reload_config, loading_config, last_packet_length, key1, krelease);
+			} else if (keystate == KEY_MAKE && keyp == K_J) {
+				sprintf(message, "l=%luScl=%luSr=%luSlc=%luSpl=%luS1=%luSk=%lu",
+					layer, config_loaded, reload_config, loading_config, last_packet_length, key1, krelease);
 			}
 
 			int c = 0;
 			char k = message[c++];
-			while (k && (c < MSG_LEN))
-			{
+			while (k && (c < MSG_LEN)) {
 				USHORT key = keymap[k];
 				keyout[kcount++] = Keydata(key, KEY_MAKE);
 				keyout[kcount++] = Keydata(key, KEY_BREAK);
 				k = message[c++];
 			}
 
-			if (kcount)
-			{
-				for (USHORT j = 0; j < kcount; j++)
-				{
+			if (kcount) {
+				for (USHORT j = 0; j < kcount; j++) {
 					USHORT key = keyout[j].key;
 					data[j].MakeCode = key;
 					data[j].Flags = keyout[j].flag | ((key >= K_HOME) ? KEY_E0 : 0);
 				}
-				*consumed = kcount;
 
+				*consumed = kcount;
 				(*(PSERVICE_CALLBACK_ROUTINE)(ULONG_PTR)devExt->UpperConnectData.ClassService)(
 					devExt->UpperConnectData.ClassDeviceObject, &data[0], &data[kcount], consumed);
 			}
 		}
 	}
-
-	*InputDataConsumed = InputDataEnd - InputDataStart;
 }
 
-
-VOID Keyoutput(USHORT layer, USHORT key1, USHORT key2)
-{
-	if (bindings[layer][key1][key2].out1 == K_VARIABLE) // binding starting with ~ is an internal command
-	{
+VOID Keyoutput(USHORT layer, USHORT key1, USHORT key2) {
+	if (bindings[layer][key1][key2].out1 == K_VARIABLE) { // binding starting with ~ is an internal command
 		Command(bindings[layer][key1][key2].out2, key1, key2, bindings[layer][key1][key2]);
-	}
-	else if (bindings[layer][key1][key2].out3) // 3 key output	
-	{
+	} else if (bindings[layer][key1][key2].out3) { // 3 key output	
 		keyout[kcount++] = Keydata(bindings[layer][key1][key2].out1, KEY_MAKE);
 		keyout[kcount++] = Keydata(bindings[layer][key1][key2].out2, KEY_MAKE);
 		keyout[kcount++] = Keydata(bindings[layer][key1][key2].out3, KEY_MAKE);
 		keyout[kcount++] = Keydata(bindings[layer][key1][key2].out3, KEY_BREAK);
 		keyout[kcount++] = Keydata(bindings[layer][key1][key2].out2, KEY_BREAK);
 		keyout[kcount++] = Keydata(bindings[layer][key1][key2].out1, KEY_BREAK);
-	}
-	else if (bindings[layer][key1][key2].out2) // 2 key output	
-	{
+	} else if (bindings[layer][key1][key2].out2) { // 2 key output	
 		keyout[kcount++] = Keydata(bindings[layer][key1][key2].out1, KEY_MAKE);
 		keyout[kcount++] = Keydata(bindings[layer][key1][key2].out2, KEY_MAKE);
 		keyout[kcount++] = Keydata(bindings[layer][key1][key2].out2, KEY_BREAK);
 		keyout[kcount++] = Keydata(bindings[layer][key1][key2].out1, KEY_BREAK);
-	}
-	else // 1 key output
-	{
+	} else { // 1 key output
 		keyout[kcount++] = Keydata(bindings[layer][key1][key2].out1, KEY_MAKE | bindings[layer][key1][key2].flag1);
 		keyout[kcount++] = Keydata(bindings[layer][key1][key2].out1, KEY_BREAK | bindings[layer][key1][key2].flag1);
 	}
+
+	// return the original key releases
+	//keyout[kcount++] = Keydata(key2, KEY_BREAK);
+	//keyout[kcount++] = Keydata(key1, KEY_BREAK);
 }
 
 
-VOID Command(USHORT cmd, USHORT key1, USHORT key2, struct_binding binding)
-{
+VOID Command(USHORT cmd, USHORT key1, USHORT key2, struct_binding binding) {
 	key1;
 	key2;
-	switch (cmd)
-	{
+	switch (cmd) {
 	case K_L: // layer change
 		layer = binding.arg1;
 		break;
@@ -1134,9 +1106,6 @@ VOID Command(USHORT cmd, USHORT key1, USHORT key2, struct_binding binding)
 	case K_P: // pause keyboard
 		if (pause == FALSE) pause = TRUE;
 		else pause = FALSE;
-		break;
-
-	case K_1: // change to mode 1
 		break;
 
 	case K_R: // Reload config file 
@@ -1149,25 +1118,16 @@ VOID Command(USHORT cmd, USHORT key1, USHORT key2, struct_binding binding)
 	}
 }
 
-
-
-
-keydata Keydata(USHORT k, USHORT f)
-{
+keydata Keydata(USHORT k, USHORT f) {
 	keydata o;
 	o.key = k;
 	o.flag = f;
 	return o;
 }
 
-
-
-
-VOID ThreadLoadConfig()
-{
+VOID ThreadLoadConfig() {
 	if (loading_config == 1) return;
-	if (loading_config == 2)
-	{
+	if (loading_config == 2) {
 		reload_config = SETTING_OFF;
 		KeyEnabled = KEY_MODE_BINDING_ON;
 		loading_config = 0; 
@@ -1175,221 +1135,183 @@ VOID ThreadLoadConfig()
 	}
 
 	HANDLE hthread;
-	if (PsCreateSystemThread(&hthread, THREAD_ALL_ACCESS, NULL, NULL, NULL, (PKSTART_ROUTINE)LoadConfig, NULL))
-	{
+	if (PsCreateSystemThread(&hthread, THREAD_ALL_ACCESS, NULL, NULL, NULL, (PKSTART_ROUTINE)LoadConfig, NULL)) {
 		loading_config = 0;
 		KeyEnabled = KEY_MODE_BINDING_ON;
 	}
 }
 
-INT LoadConfig()
-{
+INT LoadConfig() {
 	HANDLE   handle;
 	NTSTATUS ntstatus;
-	IO_STATUS_BLOCK    ioStatusBlock;
-	LARGE_INTEGER      byteOffset;
+	IO_STATUS_BLOCK ioStatusBlock;
+	LARGE_INTEGER byteOffset;
 
 	// Do not try to perform any file operations at higher IRQL levels.
 	// Instead, you may use a work item or a system worker thread to perform file operations.
-	UNICODE_STRING     uniName;
-	OBJECT_ATTRIBUTES  objAttr;
+	UNICODE_STRING uniName;
+	OBJECT_ATTRIBUTES objAttr;
 
-	RtlInitUnicodeString(&uniName, L"\\SystemRoot\\kbfiltr.txt");
+	RtlInitUnicodeString(&uniName, L"\\DosDevices\\C:\\Windows\\kbfiltr.txt");
 	InitializeObjectAttributes(&objAttr, &uniName, OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE, NULL, NULL);
 
-	
-	if (KeGetCurrentIrql() != PASSIVE_LEVEL)
-	{
+	if (KeGetCurrentIrql() != PASSIVE_LEVEL) {
 		loading_config = 2;
 		PsTerminateSystemThread(STATUS_SUCCESS);
 		return STATUS_INVALID_DEVICE_STATE;
 	}
 
-
 	ntstatus = ZwCreateFile(&handle,
-		GENERIC_READ, &objAttr, &ioStatusBlock, NULL, FILE_ATTRIBUTE_NORMAL, 0, FILE_OPEN, FILE_SYNCHRONOUS_IO_NONALERT, NULL, 0);
+		GENERIC_READ, &objAttr, &ioStatusBlock, NULL, 
+		FILE_ATTRIBUTE_NORMAL, FILE_SHARE_READ, 
+		FILE_OPEN, FILE_SYNCHRONOUS_IO_NONALERT, NULL, 0);
 
-	if (NT_SUCCESS(ntstatus))
-	{
-		byteOffset.LowPart = byteOffset.HighPart = 0;
-		ntstatus = ZwReadFile(handle, NULL, NULL, NULL, &ioStatusBlock, buffer, CONFIG_BUFFER_SIZE, &byteOffset, NULL);
-		if (NT_SUCCESS(ntstatus))
-		{
-			buffer[CONFIG_BUFFER_SIZE - 1] = '\0';
-
-			// parse the file
-			// key bindings
-			// key binding for each key with no function key
-			// bindings lay on top of the standard QWERTY keys
-			// syntax: 
-			// " signifies start of comment
-			// # hold <a> then <;> to trigger <enter>
-			// a; N	" hold a + ; = enter
-			// af E " hold a + f = esc 
-			// ~l 1	" set layer to 1, subsequent bindings will be for this layer 1
-			// ~l 2	" set layer to 2, subsequent bindings will be for this layer 2
-			// ~l 0	" set layer to 0, subsequent bindings will be for this layer 0
-			// ~l * " set for all layers 
-			// vj ~l 0 " ~ = function call, l = change layer, 0 = argument (layer 0)
-			// j  2	" single key binding: key<space><space>binding
-			// jj e " key hold binding: hold j for long key time for 'e' binding
-			// Q " stored command for recall
-
-			int len = strlen(buffer);
-			BOOLEAN commenton = FALSE;
-			int i = 0;
-			int l = 0;
-			int cmdlen = 0;
-			int _layer = 0;
-			USHORT key1 = 0, key2 = 0;
-			USHORT cmd[CMD_LEN];
-			memset(cmd, 0, CMD_LEN);
-			memset(bindings, 0, sizeof(struct_binding) * MAX_LAYERS * MAX_KEYS * MAX_KEYS);
-			memset(phrases, 0, PHRASE_MAX * PHRASE_LEN);
-
-			while (i < len)
-			{
-				char c = buffer[i++];
-				if (c == '\r' || c == '\t') continue;
-
-				if (c == '\n' || c == '\0')
-				{
-					if (key1)
-					{
-						if (key1 == K_VARIABLE) // ~
-						{
-							// use the file to set some system variables
-							char str[CMD_LEN];
-							memset(str, 0, CMD_LEN);
-							memcpy(str, cmd, CMD_LEN);
-
-							// Key bind time 
-							if (key2 == K_T)
-							{
-								ULONG value = atoi(str);
-								key_bind_time = value;
-							}
-							else if (key2 == K_D) // longkey time
-							{
-								ULONG value = atoi(str);
-								longkey_time = value;
-							}
-							else if (key2 == K_R) // key repeat time
-							{
-								ULONG value = atoi(str);
-								key_repeat_time = value;
-							}
-							else if (key2 == K_O) // key timeout
-							{
-								ULONG value = atoi(str);
-								key_bind_timeout = value;
-							}
-							else if (key2 == K_S) // safe mode during config load 1 = on 0 = off 
-							{
-								ULONG value = atoi(str);
-								safe_mode = value;
-							}
-							else if (key2 == K_C) // 1 capslock works as left shift, 0 use capslock as normal 
-							{
-								ULONG value = atoi(str);
-								capslock_to_lshift = value;
-							}
-							else if (key2 == K_L) // set binding layer 
-							{
-								// all layers
-								if (str[0] == '*') _layer = ALL_LAYERS;
-								else
-								{
-									ULONG value = atoi(str);
-									_layer = min(value, MAX_LAYERS - 1);
-								}
-							}
-							else if (key2 == K_COMMAND) // set command sequence  
-							{
-								memcpy(commands[keymap[str[0]]], &str[1], COMMAND_LEN);
-							}
-							else
-							{
-								// TODO combo hotkey phrase inserts
-								// TODO control mouse buttons and movement
-							}
-						}
-						else
-						{
-							if (cmdlen >= 4 && cmd[0] != '~') // key binding by HEX codes 
-							{
-								// 2 byte HEX codes = 4 characters
-								//example E05B = LWIN
-								int start_layer = 0, end_layer = MAX_LAYERS - 1;
-								if (_layer != ALL_LAYERS) start_layer = end_layer = _layer;
-								for (int i = start_layer; i <= end_layer; i++)
-								{
-									bindings[i][key1][K_ENABLED].out1 = K_BOUND;
-									bindings[i][key1][key2].out1 = (hex2dec[cmd[2]] << 4) + hex2dec[cmd[3]];
-									bindings[i][key1][key2].flag1 = (hex2dec[cmd[0]] << 4) + hex2dec[cmd[1]];
-									bindings[i][key1][key2].out2 = 0;
-								}
-							}
-							else // key binding
-							{
-								if (key2 == K_UNDEFINED) key2 = K_SINGLE;
-
-								int start_layer = 0, end_layer = MAX_LAYERS - 1;
-								if (_layer != ALL_LAYERS) start_layer = end_layer = _layer;
-								for (int i = start_layer; i <= end_layer; i++)
-								{
-									if (cmd[0])
-									{
-										bindings[i][key1][K_ENABLED].out1 = K_BOUND;
-										bindings[i][key1][key2].out1 = keymap[cmd[0]];
-										bindings[i][key1][key2].flag1 = 0;
-									}
-									if (cmd[1]) bindings[i][key1][key2].out2 = keymap[cmd[1]];
-									if (cmd[2]) bindings[i][key1][key2].out3 = keymap[cmd[2]];
-									if (cmd[3] && cmd[3] != ' ')
-									{
-										char str[CMD_LEN];
-										sprintf(str, "%c", cmd[3]);
-										ULONG value = atoi(str);
-										bindings[i][key1][key2].arg1 = (USHORT)value;
-									}
-								}
-							}
-						}
-					}
-					memset(cmd, 0, CMD_LEN);
-
-					cmdlen = l = 0;
-					key2 = key1 = K_UNDEFINED;
-					commenton = FALSE;
-				}
-				else
-				{
-					if (!commenton)
-					{
-						if (c == '"') commenton = TRUE;
-						else if (l == 0 && c != ' ') key1 = keymap[c];
-						else if (l == 1 && c != ' ') key2 = keymap[c];
-						// l == 2, c = ' '
-						else if ((key2 == K_UNDEFINED) && (l >= 2)) // single key command
-						{
-							cmd[l - 2] = c;
-							cmdlen++;
-						}
-						else if ((key2 != K_UNDEFINED) && (l >= 3)) // 2 key command
-						{
-							cmd[l - 3] = c;
-							cmdlen++;
-						}
-					}
-					l++;
-				}
-			}
-		}
-
-		ZwClose(handle);
+	if (!NT_SUCCESS(ntstatus)) {
+		loading_config = 2;
+		PsTerminateSystemThread(STATUS_SUCCESS);
+		return 0;
 	}
 
+	byteOffset.LowPart = byteOffset.HighPart = 0;
+	ntstatus = ZwReadFile(handle, NULL, NULL, NULL, &ioStatusBlock, buffer, CONFIG_BUFFER_SIZE, &byteOffset, NULL);
+	ZwClose(handle);
+	buffer[CONFIG_BUFFER_SIZE - 1] = '\0';
+
+	// parse the file
+	// key bindings
+	// key binding for each key with no function key
+	// bindings lay on top of the standard QWERTY keys
+	// syntax: 
+	// " signifies start of comment
+	// # hold <a> then <;> to trigger <enter>
+	// a; N	" hold a + ; = enter
+	// af E " hold a + f = esc 
+	// ~l 1	" set layer to 1, subsequent bindings will be for this layer 1
+	// ~l 2	" set layer to 2, subsequent bindings will be for this layer 2
+	// ~l 0	" set layer to 0, subsequent bindings will be for this layer 0
+	// ~l * " set for all layers 
+	// vj ~l 0 " ~ = function call, l = change layer, 0 = argument (layer 0)
+	// j  2	" single key binding: key<space><space>binding
+	// jj e " key hold binding: hold j for long key time for 'e' binding
+	// Q " stored command for recall
+
+	int len = strlen(buffer);
+	BOOLEAN commenton = FALSE;
+	int i = 0;
+	int l = 0;
+	int cmdlen = 0;
+	int _layer = 0;
+	USHORT key1 = 0, key2 = 0;
+	USHORT cmd[CMD_LEN];
+	memset(cmd, 0, CMD_LEN);
+	memset(bindings, 0, sizeof(struct_binding) * MAX_LAYERS * MAX_KEYS * MAX_KEYS);
+	memset(phrases, 0, PHRASE_MAX * PHRASE_LEN);
+
+	while (i < len) {
+		char c = buffer[i++];
+		if (c == '\r' || c == '\t') continue;
+
+		if (c == '\n' || c == '\0') {
+			if (key1) {
+				if (key1 == K_VARIABLE) { // ~ 
+					// use the file to set some system variables
+					char str[CMD_LEN];
+					memset(str, 0, CMD_LEN);
+					memcpy(str, cmd, CMD_LEN);
+
+					// Key bind time 
+					if (key2 == K_T) {
+						ULONG value = atoi(str);
+						key_bind_time = value;
+					} else if (key2 == K_D) { // longkey time
+						ULONG value = atoi(str);
+						longkey_time = value;
+					} else if (key2 == K_R) {// key repeat time
+						ULONG value = atoi(str);
+						key_repeat_time = value;
+					} else if (key2 == K_O) {// key timeout
+						ULONG value = atoi(str);
+						key_bind_timeout = value;
+					} else if (key2 == K_S) {// safe mode during config load 1 = on 0 = off 
+						ULONG value = atoi(str);
+						safe_mode = value;
+					} else if (key2 == K_C) {// 1 capslock works as left shift, 0 use capslock as normal 
+						ULONG value = atoi(str);
+						capslock_to_lshift = value;
+					} else if (key2 == K_L) { // set binding layer 
+					 // all layers
+						if (str[0] == '*') {
+							_layer = ALL_LAYERS;
+						} else {
+							ULONG value = atoi(str);
+							_layer = min(value, MAX_LAYERS - 1);
+						}
+					} else if (key2 == K_COMMAND) {// set command sequence  
+						memcpy(commands[keymap[str[0]]], &str[1], COMMAND_LEN);
+					} else {
+						// TODO combo hotkey phrase inserts
+						// TODO control mouse buttons and movement
+					}
+				} else {
+					if (cmdlen >= 4 && cmd[0] != '~') { // key binding by HEX codes 
+						// 2 byte HEX codes = 4 characters
+						//example E05B = LWIN
+						int start_layer = 0, end_layer = MAX_LAYERS - 1;
+						if (_layer != ALL_LAYERS) start_layer = end_layer = _layer;
+						for (int i = start_layer; i <= end_layer; i++) {
+							bindings[i][key1][K_ENABLED].out1 = K_BOUND;
+							bindings[i][key1][key2].out1 = (hex2dec[cmd[2]] << 4) + hex2dec[cmd[3]];
+							bindings[i][key1][key2].flag1 = (hex2dec[cmd[0]] << 4) + hex2dec[cmd[1]];
+							bindings[i][key1][key2].out2 = 0;
+						}
+					} else { // key binding
+						if (key2 == K_UNDEFINED) key2 = K_SINGLE;
+
+						int start_layer = 0, end_layer = MAX_LAYERS - 1;
+						if (_layer != ALL_LAYERS) start_layer = end_layer = _layer;
+						for (int i = start_layer; i <= end_layer; i++) {
+							if (cmd[0]) {
+								bindings[i][key1][K_ENABLED].out1 = K_BOUND;
+								bindings[i][key1][key2].out1 = keymap[cmd[0]];
+								bindings[i][key1][key2].flag1 = 0;
+							}
+							if (cmd[1]) bindings[i][key1][key2].out2 = keymap[cmd[1]];
+							if (cmd[2]) bindings[i][key1][key2].out3 = keymap[cmd[2]];
+							if (cmd[3] && cmd[3] != ' ') {
+								char str[CMD_LEN];
+								sprintf(str, "%c", cmd[3]);
+								ULONG value = atoi(str);
+								bindings[i][key1][key2].arg1 = (USHORT)value;
+							}
+						}
+					}
+				}
+			}
+			memset(cmd, 0, CMD_LEN);
+
+			cmdlen = l = 0;
+			key2 = key1 = K_UNDEFINED;
+			commenton = FALSE;
+		} else {
+			if (!commenton) {
+				if (c == '"') commenton = TRUE;
+				else if (l == 0 && c != ' ') key1 = keymap[c];
+				else if (l == 1 && c != ' ') key2 = keymap[c];
+				// l == 2, c = ' '
+				else if ((key2 == K_UNDEFINED) && (l >= 2)) { // single key command
+					cmd[l - 2] = c;
+					cmdlen++;
+				}
+				else if ((key2 != K_UNDEFINED) && (l >= 3)) { // 2 key command
+					cmd[l - 3] = c;
+					cmdlen++;
+				}
+			}
+			l++;
+		}
+	}
+
+	config_loaded = 1;
 	loading_config = 2;
 	PsTerminateSystemThread(STATUS_SUCCESS);
 	return 0;
@@ -1527,19 +1449,20 @@ VOID Initialize()
 	capslock_to_lshift = SETTING_OFF;
 	reload_config = SETTING_OFF;
 	loading_config = 0;
+	config_loaded = 0;
 	last_packet_length = 0;
 
 	// hex to dec
-	hex2dec['0'] = 0;
-	hex2dec['1'] = 1;
-	hex2dec['2'] = 2;
-	hex2dec['3'] = 3;
-	hex2dec['4'] = 4;
-	hex2dec['5'] = 5;
-	hex2dec['6'] = 6;
-	hex2dec['7'] = 7;
-	hex2dec['8'] = 8;
-	hex2dec['9'] = 9;
+	hex2dec['0'] = 0x00;
+	hex2dec['1'] = 0x01;
+	hex2dec['2'] = 0x02;
+	hex2dec['3'] = 0x03;
+	hex2dec['4'] = 0x04;
+	hex2dec['5'] = 0x05;
+	hex2dec['6'] = 0x06;
+	hex2dec['7'] = 0x07;
+	hex2dec['8'] = 0x08;
+	hex2dec['9'] = 0x09;
 	hex2dec['a'] = hex2dec['A'] = 0x0A;
 	hex2dec['b'] = hex2dec['B'] = 0x0B;
 	hex2dec['c'] = hex2dec['C'] = 0x0C;

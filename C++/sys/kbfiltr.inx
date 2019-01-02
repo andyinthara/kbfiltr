@@ -28,8 +28,8 @@ DefaultDestDir   = 12
 %DDK_Ex%   = DDK_Ex.Mfg,NT$ARCH$
 
 ; For Win2K
-[DDK_Ex.Mfg]
-%DDK_Ex% = kbfiltr, *PNP0BAAD
+;[DDK_Ex.Mfg]
+;%DDK_Ex% = kbfiltr, *PNP0BAAD
 
 ; For XP and above
 [DDK_Ex.Mfg.NT$ARCH$]
@@ -101,8 +101,8 @@ kbfiltr.sys = 1,,
 ;--- kbfiltr Coinstaller installation ------
 ;
 
-[DestinationDirs]
-kbfiltr_CoInstaller_CopyFiles = 11
+;[DestinationDirs]
+;kbfiltr_CoInstaller_CopyFiles = 11
 
 [kbfiltr.NT.CoInstallers]
 AddReg=kbfiltr_CoInstaller_AddReg
@@ -114,8 +114,8 @@ HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfC
 [kbfiltr_CoInstaller_CopyFiles]
 WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
 
-[SourceDisksFiles]
-WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+;[SourceDisksFiles]
+;WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
 
 [kbfiltr.NT.Wdf]
 KmdfService = kbfiltr, kbfiltr_wdfsect
@@ -142,7 +142,7 @@ SERVICEROOT    = "System\CurrentControlSet\Services"
 ;
 
 DiskId1 = "DDK Example Installation Disk #1 (Keyboard)"
-DDK_Ex = "DDK Example Device that needs filtering"
+DDK_Ex = "DDK keyboard filtering"
 ; Make sure the service description is unique to avoid collision with another INF.
 kbfiltr.SvcDesc="WDK Keyboard Filter Example"
 
